@@ -1,0 +1,34 @@
+<app-header [title]="`שאלה ${questionCount()}`"/>
+<app-inner-layout>
+    <div class="flex flex-col justify-between flex-1">
+    @if (!showAnswer()) {
+        <div class="flex flex-col justify-center items-center flex-1">
+            <span>{{ question() }}</span>
+        </div>
+        <div class="flex flex-row justify-center items-end gap-4 mt-4">
+            <app-button (click)="showCorrectAnswer()" title="תשובה"/>
+        </div>
+    } @else {
+        <div class="flex flex-col justify-center items-center flex-1">
+            <span class="">{{ answer() }}</span>
+        </div>
+        <div class="flex flex-row justify-center items-end gap-4 mt-4">
+            <app-button 
+                (click)="onNextQuestion(answerOptions.Correct)" 
+                title="ידעתי" 
+                [color]="buttonColor.Green"
+            />
+            <!-- <app-button 
+                (click)="onNextQuestion(answerOptions.CloseCall)" 
+                title="כמעט" 
+                [color]="buttonColor.Yellow"
+            /> -->
+            <app-button 
+                (click)="onNextQuestion(answerOptions.Incorrect)" 
+                title="לא ידעתי" 
+                [color]="buttonColor.Red"
+            />
+        </div>
+    }
+    </div>
+</app-inner-layout>

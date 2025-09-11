@@ -1,0 +1,13 @@
+<app-header title="סיכום"/>
+<app-inner-layout>
+        <div class="flex flex-col justify-center items-center flex-1">
+            @if (score() && score()!.score && score()!.time) {
+                <span class="">{{ score()!.score }} answers</span>
+                <span class="">{{ score()!.time }} seconds</span>    
+            }
+            @if (ranking() && ranking()!.rank && ranking()!.total_players) {
+                <span>position: {{ ranking()!.rank }} out of {{ ranking()!.total_players }}</span>
+            }
+        </div>
+</app-inner-layout>
+AIzaSyB6rjY8FdpqF7A3bg4rRRcWkgbTqGVyyR4

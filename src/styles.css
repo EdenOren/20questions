@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+@theme {
+  /* Purple Theme */
+  --color-primary-purple: #560bad;
+  --color-active-purple: #3a0ca3;
+
+  /* Green Theme */
+  --color-primary-green: #38a169;
+  --color-active-green: #2f855a;
+
+  /* Blue Theme */
+  --color-primary-blue: #3182ce;
+  --color-active-blue: #2b6cb0;
+
+  /* Red Theme */
+  --color-primary-red: #e53e3e;
+  --color-active-red: #c53030;
+
+  /* Yellow Theme */
+  --color-primary-yellow: #ecc94b;
+  --color-active-yellow: #d69e2e;
+}
+
+
+.btn {
+  position: relative;
+  display: inline-block;
+  width: 8em;
+  height: 2.6em;
+  line-height: 2.5em;
+  margin: 20px;
+  cursor: pointer;
+  overflow: hidden;
+  border: 2px solid var(--color-primary-purple);
+  transition: color 0.5s;
+  z-index: 1;
+  font-size: 17px;
+  border-radius: 6px;
+  font-weight: 500;
+  color: var(--color-primary);
+}
+.btn--blue { border-color: var(--color-primary-blue); }
+.btn--green { border-color: var(--color-primary-green); }
+.btn--yellow { border-color: var(--color-primary-yellow); }
+.btn--red { border-color: var(--color-primary-red); }
+
+.btn::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  background-color: var(--color-primary-purple);
+  height: 150px;
+  width: 200px;
+  border-radius: 50%;
+  top: 100%;
+  left: 100%;
+  transition: all 0.7s;
+}
+
+.btn--green::before { background-color: var(--color-primary-green); }
+.btn--blue::before { background-color: var(--color-primary-blue); }
+.btn--yellow::before { background-color: var(--color-primary-yellow); }
+.btn--red::before { background-color: var(--color-primary-red); }
+
+.btn:hover {
+  color: #fff;
+}
+
+.btn:hover::before {
+  top: -30px;
+  left: -30px;
+}
+
+.btn:active::before {
+  transition: background-color 0s;
+  background-color: var(--color-active-purple);
+}
+.btn--green:active::before { background-color: var(--color-active-green); }
+.btn--blue:active::before { background-color: var(--color-active-blue); }
+.btn--yellow:active::before { background-color: var(--color-active-yellow); }
+.btn--red:active::before { background-color: var(--color-active-red); }
