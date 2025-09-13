@@ -1,34 +1,40 @@
 <app-header [title]="`שאלה ${questionCount()}`"/>
 <app-inner-layout>
-    <div class="flex flex-col justify-between flex-1">
+  <div class="flex flex-col justify-between flex-1 p-6">
+
     @if (!showAnswer()) {
-        <div class="flex flex-col justify-center items-center flex-1">
-            <span>{{ question() }}</span>
-        </div>
-        <div class="flex flex-row justify-center items-end gap-4 mt-4">
-            <app-button (click)="showCorrectAnswer()" title="תשובה"/>
-        </div>
+      <!-- Question text -->
+      <div class="flex flex-col justify-center items-center flex-1">
+        <span class="text-xl sm:text-3xl font-semibold text-gray-800 text-center leading-relaxed">
+          {{ question() }}
+        </span>
+      </div>
+
+      <!-- Answer button -->
+      <div class="flex flex-row justify-center items-end gap-4 mt-4">
+        <app-button (click)="showCorrectAnswer()" title="תשובה"/>
+      </div>
     } @else {
-        <div class="flex flex-col justify-center items-center flex-1">
-            <span class="">{{ answer() }}</span>
-        </div>
-        <div class="flex flex-row justify-center items-end gap-4 mt-4">
-            <app-button 
-                (click)="onNextQuestion(answerOptions.Correct)" 
-                title="ידעתי" 
-                [color]="buttonColor.Green"
-            />
-            <!-- <app-button 
-                (click)="onNextQuestion(answerOptions.CloseCall)" 
-                title="כמעט" 
-                [color]="buttonColor.Yellow"
-            /> -->
-            <app-button 
-                (click)="onNextQuestion(answerOptions.Incorrect)" 
-                title="לא ידעתי" 
-                [color]="buttonColor.Red"
-            />
-        </div>
+      <!-- Answer text -->
+      <div class="flex flex-col justify-center items-center flex-1">
+        <span class="text-xl sm:text-3xl font-semibold text-gray-800 text-center leading-relaxed">
+          {{ answer() }}
+        </span>
+      </div>
+
+      <!-- Next buttons -->
+      <div class="flex flex-row justify-center items-end gap-4 mt-4">
+        <app-button 
+          (click)="onNextQuestion(answerOptions.Correct)" 
+          title="ידעתי" 
+          [color]="buttonColor.Green"
+        />
+        <app-button 
+          (click)="onNextQuestion(answerOptions.Incorrect)" 
+          title="לא ידעתי" 
+          [color]="buttonColor.Red"
+        />
+      </div>
     }
-    </div>
+  </div>
 </app-inner-layout>

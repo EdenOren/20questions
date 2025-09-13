@@ -32,7 +32,7 @@ export class ScoreService {
   }
 
   public saveScore(): Observable<boolean> {
-    const time: string = ((this.endTime - this.startTime) / 1000).toFixed(2);
+    const time: string = ((this.endTime - this.startTime) / 1000 / 60).toFixed(2);
     this.score.set({
       score: this.points(),
       time: parseFloat(time)

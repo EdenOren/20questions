@@ -3,10 +3,13 @@ import { Header } from '../../shared/layout/header/header';
 import { InnerLayout } from "../../shared/inner-layout/inner-layout";
 import { ScoreService } from '../../core/service/score.service';
 import { Rank, Score } from '../../core/models/core.model';
+import { Button } from '../../shared/ui/button/button';
+import { Router } from '@angular/router';
+import { AppRoutes } from '../../core/enums/core.enums';
 
 @Component({
   selector: 'app-review',
-  imports: [Header, InnerLayout],
+  imports: [Header, InnerLayout, Button],
   templateUrl: './review.html',
   styleUrl: './review.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -15,7 +18,7 @@ export class Review {
   public score: WritableSignal<Score | undefined> = signal<Score | undefined>(undefined);
   public ranking: WritableSignal<Rank | undefined> = signal<Rank | undefined>(undefined);
 
-  constructor(private scoreService: ScoreService) {
+  constructor(private scoreService: ScoreService, private router: Router) {
     this.setReviewData();
   }
 
@@ -28,5 +31,9 @@ export class Review {
         this.ranking.set(rank);
       });
     }
+  }
+
+  public retry(): void {
+    this.router.navigate([`/${AppRoutes.Home}`]);
   }
 }
