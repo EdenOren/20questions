@@ -63,7 +63,7 @@ export class Question {
   public onNextQuestion(answer: AnswerOptions): void {
     this.scoreService.addScore(answer);
 
-    if (this.questionCount() >= 1) {
+    if (this.questionCount() >= MAX_QUESTIONS) {
       this.onComplete();
     } else {
       this.setNextQuestion();

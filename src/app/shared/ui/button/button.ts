@@ -15,7 +15,7 @@ export enum ButtonColor {
   styleUrl: './button.css'
 })
 export class Button {
-  title: InputSignal<string> = input<string>('');
+  label: InputSignal<string> = input<string>('');
   icon: InputSignal<string> = input<string>('');
   color: InputSignal<string> = input<string>(ButtonColor.Purple);
 }

@@ -23,7 +23,7 @@
 }
 
 
-.btn {
+.button {
   position: relative;
   display: inline-block;
   width: 8em;
@@ -40,12 +40,12 @@
   font-weight: 500;
   color: var(--color-primary);
 }
-.btn--blue { border-color: var(--color-primary-blue); }
-.btn--green { border-color: var(--color-primary-green); }
-.btn--yellow { border-color: var(--color-primary-yellow); }
-.btn--red { border-color: var(--color-primary-red); }
+.button--blue { border-color: var(--color-primary-blue); }
+.button--green { border-color: var(--color-primary-green); }
+.button--yellow { border-color: var(--color-primary-yellow); }
+.button--red { border-color: var(--color-primary-red); }
 
-.btn::before {
+.button::before {
   content: "";
   position: absolute;
   z-index: -1;
@@ -58,25 +58,45 @@
   transition: all 0.7s;
 }
 
-.btn--green::before { background-color: var(--color-primary-green); }
-.btn--blue::before { background-color: var(--color-primary-blue); }
-.btn--yellow::before { background-color: var(--color-primary-yellow); }
-.btn--red::before { background-color: var(--color-primary-red); }
+.button--green::before { background-color: var(--color-primary-green); }
+.button--blue::before { background-color: var(--color-primary-blue); }
+.button--yellow::before { background-color: var(--color-primary-yellow); }
+.button--red::before { background-color: var(--color-primary-red); }
 
-.btn:hover {
+.button:hover {
   color: #fff;
 }
 
-.btn:hover::before {
+.button:hover::before {
   top: -30px;
   left: -30px;
 }
 
-.btn:active::before {
+.button:active::before {
   transition: background-color 0s;
   background-color: var(--color-active-purple);
 }
-.btn--green:active::before { background-color: var(--color-active-green); }
-.btn--blue:active::before { background-color: var(--color-active-blue); }
-.btn--yellow:active::before { background-color: var(--color-active-yellow); }
-.btn--red:active::before { background-color: var(--color-active-red); }
+.button--green:active::before { background-color: var(--color-active-green); }
+.button--blue:active::before { background-color: var(--color-active-blue); }
+.button--yellow:active::before { background-color: var(--color-active-yellow); }
+.button--red:active::before { background-color: var(--color-active-red); }
+
+@media (max-width: 1024px) {
+  .button {
+    color: #fff;
+  }
+
+  .button::before {
+    top: -30px;
+    left: -30px;
+  }
+
+  .button:hover {
+    color: #fff;
+  }
+
+  .button:hover::before {
+    top: -30px;
+    left: -30px;
+  }
+}
