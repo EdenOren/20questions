@@ -7,22 +7,26 @@ import { DataService } from '../../core/service/data.service';
 import { Router } from '@angular/router';
 import { Button, ButtonColor } from "../../shared/ui/button/button";
 import { InnerLayout } from "../../shared/inner-layout/inner-layout";
+import { LoaderComponent } from "../../shared/ui/loader/loader/loader";
+
+const FIRST_QUESTION_NUM = 1;
 
 @Component({
   selector: 'app-question',
-  imports: [Header, Button, InnerLayout],
+  imports: [Header, Button, InnerLayout, LoaderComponent],
   templateUrl: './question.html',
   styleUrl: './question.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Question {
-  public questionCount: WritableSignal<number> = signal(1);
+  public isLoading: WritableSignal<boolean> = signal(false);
+  public questionNum: WritableSignal<number> = signal(FIRST_QUESTION_NUM);
   public question: WritableSignal<string | undefined> = signal(undefined);
   public answer: WritableSignal<string | undefined> = signal(undefined);
   public showAnswer: WritableSignal<boolean> = signal(false);
 
-  public answerOptions = AnswerOptions;
-  public buttonColor = ButtonColor;
+  public readonly answerOptions = AnswerOptions;
+  public readonly buttonColor = ButtonColor;
 
   constructor(
     private scoreService: ScoreService,
@@ -34,9 +38,11 @@ export class Question {
   }
 
   private updateQuestion() {
-    this.dataService.getQuestionById(this.questionCount()).subscribe((data) => {
+    this.isLoading.set(true);
+    this.dataService.getQuestionById(this.questionNum()).subscribe((data) => {
       this.question.set(data?.question);
       this.answer.set(undefined);
+      this.isLoading.set(false);
     });
   }
 
@@ -47,23 +53,25 @@ export class Question {
   }
 
   private setNextQuestion() {
-    this.questionCount.update(count => count + 1);
+    this.questionNum.update(count => count + 1);
     this.showAnswer.set(false);
     this.updateQuestion();
   }
 
   public showCorrectAnswer(): void {
-    this.dataService.getAnswerById(this.questionCount()).subscribe((data) => {
+    this.isLoading.set(true);
+    this.dataService.getAnswerById(this.questionNum()).subscribe((data) => {
       this.question.set(undefined);
       this.answer.set(data?.answer);
       this.showAnswer.set(true);
+      this.isLoading.set(false);
     });
   }
 
   public onNextQuestion(answer: AnswerOptions): void {
     this.scoreService.addScore(answer);
 
-    if (this.questionCount() >= MAX_QUESTIONS) {
+    if (this.questionNum() >= MAX_QUESTIONS) {
       this.onComplete();
     } else {
       this.setNextQuestion();

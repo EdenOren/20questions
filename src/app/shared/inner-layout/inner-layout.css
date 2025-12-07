@@ -1,0 +1,14 @@
+:host {
+    display: flex;
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 85vh;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) { .container { min-height: 24rem; } }
+@media (min-width: 768px) { .container { min-height: 16rem; } }
+@media (min-width: 1024px) { .container { min-height: 20rem; } }

@@ -1,40 +1,43 @@
-<app-header [title]="`שאלה ${questionCount()}`"/>
+<app-header [title]="`שאלה ${questionNum()}`"/>
 <app-inner-layout>
-  <div class="flex flex-col justify-between flex-1 p-6">
-
-    @if (!showAnswer()) {
-      <!-- Question text -->
-      <div class="flex flex-col justify-center items-center flex-1">
-        <span class="text-xl sm:text-2xl font-semibold text-gray-800 text-center leading-relaxed">
-          {{ question() }}
-        </span>
-      </div>
-
-      <!-- Answer button -->
-      <div class="flex flex-row justify-center items-end gap-4 mt-4">
-        <app-button (click)="showCorrectAnswer()" label="תשובה"/>
-      </div>
+  <div class="container">
+    @if (isLoading()) {
+      <app-loader/>
     } @else {
-      <!-- Answer text -->
-      <div class="flex flex-col justify-center items-center flex-1">
-        <span class="text-xl sm:text-2xl font-semibold text-gray-800 text-center leading-relaxed">
-          {{ answer() }}
-        </span>
-      </div>
+      @if (!showAnswer()) {
+        <!-- Question text -->
+        <div class="text-container">
+          <span class="text">
+            {{ question() }}
+          </span>
+        </div>
 
-      <!-- Next buttons -->
-      <div class="flex flex-row justify-center items-end gap-4 mt-4">
-        <app-button 
-          (click)="onNextQuestion(answerOptions.Correct)" 
-          label="ידעתי" 
-          [color]="buttonColor.Green"
-        />
-        <app-button 
-          (click)="onNextQuestion(answerOptions.Incorrect)" 
-          label="לא ידעתי" 
-          [color]="buttonColor.Red"
-        />
-      </div>
+        <!-- Answer button -->
+        <div class="button-container">
+          <app-button (click)="showCorrectAnswer()" label="תשובה"/>
+        </div>
+      } @else {
+        <!-- Answer text -->
+        <div class="text-container">
+          <span class="text">
+            {{ answer() }}
+          </span>
+        </div>
+
+        <!-- Next buttons -->
+        <div class="button-container">
+          <app-button 
+            (click)="onNextQuestion(answerOptions.Correct)" 
+            label="ידעתי" 
+            [color]="buttonColor.Green"
+          />
+          <app-button 
+            (click)="onNextQuestion(answerOptions.Incorrect)" 
+            label="לא ידעתי" 
+            [color]="buttonColor.Red"
+          />
+        </div>
+      }
     }
   </div>
 </app-inner-layout>
