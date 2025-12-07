@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Question, Rank, Score } from '../models/core.model';
+import { Question } from '../models/core.model';
 import { SupabaseService } from './supabase.service';
 import { Observable } from 'rxjs';
 

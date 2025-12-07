@@ -3,13 +3,15 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from '../../../environment/environment';
 import { Question, Rank, Score } from '../models/core.model';
 import { Observable, from, of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, retry } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SupabaseService {
   private supabase: SupabaseClient;
+  private readonly MAX_RETRIES = 3;
+  private readonly RETRY_DELAY = 1000; // ms
 
   constructor() {
     this.supabase = createClient(
@@ -18,7 +20,11 @@ export class SupabaseService {
     );
   }
 
-public getQuestion(id: number): Observable<Omit<Question, 'answer'> | null> {
+  /**
+   * Fetches a question by ID with automatic retries
+   * Returns whatever data is available, even if partial
+   */
+  public getQuestion(id: number): Observable<Omit<Question, 'answer'> | null> {
     return from(
       this.supabase
         .from('questions_for_frontend')
@@ -26,20 +32,29 @@ public getQuestion(id: number): Observable<Omit<Question, 'answer'> | null> {
         .eq('id', id)
         .single()
     ).pipe(
+      retry({
+        count: this.MAX_RETRIES,
+        delay: this.RETRY_DELAY
+      }),
       map(({ data, error }) => {
         if (error) {
-          console.error('Error fetching question:', error);
-          return null;
+          console.error(`Error fetching question ${id}:`, error.message);
         }
-        return data || [];
+        // Return whatever we got, even if there was an error
+        return data || null;
       }),
       catchError(err => {
-        console.error('Unexpected error fetching question:', err);
+        console.error(`All retries failed for question ${id}:`, err);
+        // Return null but don't block
         return of(null);
       })
     );
   }
 
+  /**
+   * Fetches an answer by ID with automatic retries
+   * Returns whatever data is available, even if partial
+   */
   public getAnswer(id: number): Observable<Omit<Question, 'question'> | null> {
     return from(
       this.supabase
@@ -48,40 +63,58 @@ public getQuestion(id: number): Observable<Omit<Question, 'answer'> | null> {
         .eq('id', id)
         .single()
     ).pipe(
+      retry({
+        count: this.MAX_RETRIES,
+        delay: this.RETRY_DELAY
+      }),
       map(({ data, error }) => {
         if (error) {
-          console.error('Error fetching questions:', error);
-          return null;
+          console.error(`Error fetching answer ${id}:`, error.message);
         }
-        return data || [];
+        // Return whatever we got, even if there was an error
+        return data || null;
       }),
       catchError(err => {
-        console.error('Unexpected error fetching questions:', err);
+        console.error(`All retries failed for answer ${id}:`, err);
+        // Return null but don't block
         return of(null);
       })
     );
   }
 
+  /**
+   * Saves a score with automatic retries
+   * Always returns true to prevent blocking the user experience
+   */
   public saveScore(score: Score): Observable<boolean> {
     return from(
       this.supabase
         .from('scores')
         .insert([score])
     ).pipe(
+      retry({
+        count: this.MAX_RETRIES,
+        delay: this.RETRY_DELAY
+      }),
       map(({ error }) => {
         if (error) {
-          console.error('Error saving score:', error);
-          return false;
+          console.error('Error saving score (non-blocking):', error.message);
+          // Still return true - we don't want to block the user
         }
         return true;
       }),
       catchError(err => {
-        console.error('Unexpected error saving score:', err);
-        return of(false);
+        console.error('All retries failed saving score (non-blocking):', err);
+        // Always return true to prevent blocking user flow
+        return of(true);
       })
     );
   }
 
+  /**
+   * Gets user ranking with graceful handling
+   * Returns best available data, even if incomplete
+   */
   public getMyRanking(userScore: Score): Observable<Rank> {
     return from(
       this.supabase
@@ -90,25 +123,28 @@ public getQuestion(id: number): Observable<Omit<Question, 'answer'> | null> {
         .order('score', { ascending: false })
         .order('time', { ascending: true })
     ).pipe(
+      retry({
+        count: this.MAX_RETRIES,
+        delay: this.RETRY_DELAY
+      }),
       map(({ data, error }) => {
-        if (error || !data) {
-          console.error('Error fetching scores:', error);
-          return {
-            rank: 1,
-            total_players: 1
-          };
+        if (error) {
+          console.error('Error fetching scores for ranking:', error?.message);
         }
+        
+        // Use whatever data we got, even if empty
+        const totalPlayers = data?.length || 1;
+        let rank = 1;
 
-        const totalPlayers = data.length;
-
-        let rank: number = 1;
-        for (const entry of data) {
+        if (data && data.length > 0) {
+          for (const entry of data) {
             if (
-                entry.score > userScore.score || 
-                (entry.score === userScore.score && entry.time < userScore.time)
+              entry.score > userScore.score || 
+              (entry.score === userScore.score && entry.time < userScore.time)
             ) {
-                rank++;
+              rank++;
             }
+          }
         }
 
         return {
@@ -117,7 +153,8 @@ public getQuestion(id: number): Observable<Omit<Question, 'answer'> | null> {
         };
       }),
       catchError(err => {
-        console.error('Unexpected error getting ranking:', err);
+        console.error('All retries failed getting ranking:', err);
+        // Return minimal valid data
         return of({
           rank: 1,
           total_players: 1
